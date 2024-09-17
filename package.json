@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "npx playwright test --ui",
+    "test": "npx playwright test",
     "run:chromium": "pnpm exec playwright test --project=chromium",
     "run:example": "pnpm exec playwright test example"
   },

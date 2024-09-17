@@ -14,7 +14,7 @@ config = {
     seed: "https://docs.haystack.deepset.ai/docs",
     baseUrl: "https://docs.haystack.deepset.ai",
     outputFile: 'output.txt',
-    isValidatedURL: (url) => url.startsWith('/'),
+    isValidatedURL: (url) => url.startsWith('/') && !url.includes('/edit/') && !url.includes('/v1.'),
 };
 
 const saveOutput = async (str: string) => {
@@ -39,12 +39,15 @@ test("scan....", async ({ page, context }) => {
     
         for (const href of links) {
             if (config.isValidatedURL(href) && !seenUrls.has(href)) {
-                seenUrls.add(href); // 添加到集合中
-                console.log({ url: `${baseUrl}${href}` });
+                const fullUrl = `${baseUrl}${href}`;
+                const response = await currentPage.context().request.get(fullUrl);
+                if (response.status() !== 404) {
+                    seenUrls.add(href);
+                    console.log({ url: fullUrl });
+                }
             }
         }
     };
-
     // 提取当前页面的链接
     await extractLinks(page);
 
